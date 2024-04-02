@@ -39,6 +39,8 @@ public:
     int get_size() {//размер списка
         return size;
     }
+    
+
 
     T take_front() { //получение первого элемент списка
         if (size != 0) {
@@ -50,7 +52,7 @@ public:
     }
 
     T pop_front() {//удаление первого элемента списка
-        T value = first->data;
+        T value = front->data;
 
         if (size == 1) {
             delete front;
@@ -66,13 +68,13 @@ public:
         }
 
         front = front->next;
-        delete front->left;
-        front->next = nullptr;
+        delete front->prev;
+        front->prev = nullptr;
         size--;
         return value;
     }
 
-    T Take_back() {//получение последнего элемента списка
+    T take_back() {//получение последнего элемента списка
         if (size != 0) {
             return back->data;
         }
@@ -121,15 +123,28 @@ public:
         return position(index)->data;
     }
 
+    void first() {
+    };
+    void last() {
+    };
+    void get_next() {
+    };
+    void get_prev() {
+    };
+    bool not_end() {
+    };
+
     void push_front(T object) {//вставка элемента в начало 
-        MyBase<T> * buf = new MyBase<T>(object);
+        MyBase<T> *buf = new MyBase<T>(object);
         buf->data = object;
-        buf->front = nullptr;
-        buf->back = front; //одностороння связь буф и фронта (0 и 1 элем)
+        buf->prev = nullptr;
+        buf->next = front; //одностороння связь буф и фронта (0 и 1 элем)
 
         if (size > 0) {
-            front->prev = nullptr; //двусторонняя связь
-            front = buf; //перетаскиваем фронт
+            
+            front = buf; //двусторонняя связь, перетаскиваем фронт
+            front->next = front;
+            front->prev = nullptr;
         }
         else {
             back = buf;
@@ -163,7 +178,7 @@ public:
             return;
         }
         if (index < 0 || index > size) {
-            throw std::out_of_range("err: wrong index");
+            throw std::out_of_range("wrong index");
             return;
         }
 
@@ -178,13 +193,52 @@ public:
         buf->prev = old->prev; 
         buf->next = old; //односторонняя связь
 
-        old->prev->next = buf;//двусторонняя связь
+        (old->prev)->next = buf;//двусторонняя связь
         old->prev = buf;
         
         size++;
     }
 
-    
+    T remove(int index) { //удаление элем по индексу
+        if (index == 0) {
+            return popFront();
+        }
+        if (index == size - 1) {
+            return popBack();
+        }
+        if (index < 0 || index > size) {
+            throw std::out_of_range("wrong index");
+            return;
+        }
+
+        MyBase<T> * buf = position(index);
+        T value = buf->data;
+        (buf->prev)->next = buf->next;
+        (buf>next)->prev = buf->prev;
+
+        delete buf;
+        size--;
+        return value;
+    }
+
+    T remove(MyBase<T> *object) { //удаление обджекта из списка
+        if (object == front) {
+            pop_front();
+            return;
+        }
+        if (object == back) {
+            pop_back();
+            return;
+        }
+        T value = object->data;
+        (object->prev)->next = object->next;
+        (object->next)->prev = object->prev;
+
+        delete object;
+        size--;
+        return value;
+    }
+
     
 };
 
