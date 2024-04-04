@@ -6,8 +6,8 @@ public:
     T data;
     MyBase<T> *next = nullptr;
     MyBase<T> *prev = nullptr;
-
-    MyBase() {} 
+ 
+    MyBase() {};
 
     MyBase(T value) {
         data = value;
@@ -38,32 +38,18 @@ public:
         std::cout << "~MyStorage\n";
     }
 
-    int get_size() {
+    size_t get_size() const {
         return size;
     }
-    void get_next() {
-        if (current == nullptr) {
-            return;
-        }
-        if (current->next != nullptr) {
-            current = current->next;
-            return;
-        }
-        return;
+    T get_next(MyBase<T> *it) {
+        return it->next->data;
     }
 
-    void get_prev() {
-        if (current == nullptr) {
-            return;
-        }
-        if (current->prev != nullptr) {
-            current = current->prev;
-            return;
-        }
-        return;
+    T get_prev(MyBase<T>* it) {
+        return it->prev->data;
     }
 
-    T take_front() { 
+    T get_front() { 
         if (size == 0) {
             return 0;
         }
@@ -96,7 +82,7 @@ public:
         return value;
     }
 
-    T take_back() {//получение последнего элемента списка
+    T get_back() {//получение последнего элемента списка
         if (size == 0) {
             return 0;
         }
@@ -235,7 +221,9 @@ public:
         return value;
     }
 
-    
+    T operator[](int index) { 
+        return get_value(index); 
+    }
 };
 
 int main()
@@ -247,14 +235,17 @@ int main()
         a.push_back(i);
     }
     a.insert(3, 32);
-    
+
+    MyBase<int>* b = a.position(4);
+    std::cout << a.get_prev(b) << std::endl;
+
     a.remove(7);
 
-    std::cout<<a.take_back() << std::endl;
+    std::cout<<a.get_back() << std::endl;
    
     std::cout<< a.get_value(7) << std::endl;
     
-    //std::cout << a.take_front();
+    //std::cout << a.get_front();
 
     std::cout << "Hello World!\n";
     return 0;
