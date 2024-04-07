@@ -4,17 +4,16 @@ template<typename T>
 class MyBase {
 public:
     T data;
-    MyBase<T> *next = nullptr;
+    MyBase<T>* next = nullptr;
     MyBase<T> *prev = nullptr;
  
-    MyBase() {};
+    MyBase() {}
 
     MyBase(T value) {
-        data = value;
+        this->data = value;
     }
-
-    ~MyBase() {}
 };
+
 
 template <typename T>
 class MyStorage {
@@ -22,7 +21,7 @@ private:
     MyBase<T> *front = nullptr;
     MyBase<T> *back = nullptr;
     MyBase<T> *current = nullptr;
-    int size = 0;
+    T size = 0;
 
 public:
 
@@ -38,12 +37,14 @@ public:
         std::cout << "~MyStorage\n";
     }
 
-    size_t get_size() const {
+    T get_size() const {
         return size;
     }
-    T get_next(MyBase<T> *it) {
+
+    T get_next(MyBase<T>* it) {
         return it->next->data;
     }
+
 
     T get_prev(MyBase<T>* it) {
         return it->prev->data;
@@ -51,6 +52,7 @@ public:
 
     T get_front() { 
         if (size == 0) {
+            throw std::out_of_range("empty list");
             return 0;
         }
         else {
@@ -58,7 +60,7 @@ public:
         }
     }
 
-    T pop_front() {//получнеие и удаление первого элемента списка
+    T pop_front() {//получение и удаление первого элемента
 
         T value = front->data;
 
@@ -84,6 +86,7 @@ public:
 
     T get_back() {//получение последнего элемента списка
         if (size == 0) {
+            throw std::out_of_range("empty list");
             return 0;
         }
         else {
@@ -116,7 +119,7 @@ public:
 
     MyBase<T> *position(int index) { //получение указателя на объект,  по индексу 
         MyBase<T> *buf = front;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) { //eol
             if (i == index) {
                 return buf;
             }
@@ -197,8 +200,6 @@ public:
     }
 
 
-
-
     T remove(int index) { //удаление элем по индексу
         if (index == 0) {
             return pop_front();
@@ -221,31 +222,33 @@ public:
         return value;
     }
 
-    T operator[](int index) { 
-        return get_value(index); 
+    T& operator[](int index) {
+        return position(index)->data;
+        //T operator ... return get_value(index)
     }
 };
+
+
+
+
 
 int main()
 {
     MyStorage <int> a;
 
-
     for (int i = 0; i < 10; i++) {
         a.push_back(i);
     }
     a.insert(3, 32);
+    
+    std::cout << a[7] << "\n";
 
     MyBase<int>* b = a.position(4);
     std::cout << a.get_prev(b) << std::endl;
 
     a.remove(7);
 
-    std::cout<<a.get_back() << std::endl;
-   
-    std::cout<< a.get_value(7) << std::endl;
-    
-    //std::cout << a.get_front();
+    //std::cout<< a.get_value(7) << std::endl;
 
     std::cout << "Hello World!\n";
     return 0;
