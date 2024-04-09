@@ -5,8 +5,8 @@ class MyBase {
 public:
     T data;
     MyBase<T>* next = nullptr;
-    MyBase<T> *prev = nullptr;
- 
+    MyBase<T>* prev = nullptr;
+
     MyBase() {}
 
     MyBase(T value) {
@@ -18,11 +18,12 @@ public:
 template <typename T>
 class MyStorage {
 private:
-    MyBase<T> *front = nullptr;
-    MyBase<T> *back = nullptr;
-    MyBase<T> *current = nullptr;
+    MyBase<T>* front = nullptr;
+    MyBase<T>* back = nullptr;
+    MyBase<T>* current = nullptr;
     T size = 0;
 
+    MyBase<T>* position(int index);
 public:
 
     MyStorage() {
@@ -41,16 +42,16 @@ public:
         return size;
     }
 
-    T get_next(MyBase<T>* it) {
-        return it->next->data;
+    T get_next(int index) {
+        return front.position(index)->next->data;
     }
 
 
-    T get_prev(MyBase<T>* it) {
-        return it->prev->data;
+    T get_prev(int index) {
+        return back.position(index)->prev->data;
     }
 
-    T get_front() { 
+    T get_front() {
         if (size == 0) {
             throw std::out_of_range("empty list");
             return 0;
@@ -117,8 +118,8 @@ public:
         return value;
     }
 
-    MyBase<T> *position(int index) { //получение указателя на объект,  по индексу 
-        MyBase<T> *buf = front;
+    MyBase<T>* position(int index) { //получение указателя на объект,  по индексу 
+        MyBase<T>* buf = front;
         for (int i = 0; i < size; i++) { //eol
             if (i == index) {
                 return buf;
@@ -135,10 +136,10 @@ public:
     }
 
     void push_front(T object) {//вставка элемента в начало 
-        MyBase<T> *buf = new MyBase<T>(object);
+        MyBase<T>* buf = new MyBase<T>(object);
         buf->data = object;
         buf->prev = nullptr;
-        buf->next = front; 
+        buf->next = front;
 
         if (size > 0) {
             front->prev = buf;
@@ -190,12 +191,12 @@ public:
 
         MyBase<T>* old = buf; //принимает значение элемента с заданным индексом
         buf = new MyBase<T>(object);
-        buf->prev = old->prev; 
+        buf->prev = old->prev;
         buf->next = old; //односторонняя связь
 
         (old->prev)->next = buf;//двусторонняя связь
         old->prev = buf;
-        
+
         size++;
     }
 
@@ -240,11 +241,11 @@ int main()
         a.push_back(i);
     }
     a.insert(3, 32);
-    
+
     std::cout << a[7] << "\n";
 
-    MyBase<int>* b = a.position(4);
-    std::cout << a.get_prev(b) << std::endl;
+    //MyBase<int>* b = a.position(4);
+    std::cout << a.get_prev(4) << std::endl;
 
     a.remove(7);
 
