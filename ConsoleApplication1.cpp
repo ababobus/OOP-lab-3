@@ -23,7 +23,18 @@ private:
     MyBase<T>* current = nullptr;
     T size = 0;
 
-    MyBase<T>* position(int index);
+    MyBase<T>* position(int index) { //получение указателя на объект,  по индексу 
+        MyBase<T>* buf = front;
+        for (int i = 0; i < size; i++) { //eol
+            if (i == index) {
+                return buf;
+            }
+            else {
+                buf = buf->next;
+            }
+        }
+        return nullptr;
+    }
 public:
 
     MyStorage() {
@@ -43,12 +54,12 @@ public:
     }
 
     T get_next(int index) {
-        return front.position(index)->next->data;
+        return position(index)->next->data;
     }
 
 
     T get_prev(int index) {
-        return back.position(index)->prev->data;
+        return position(index)->prev->data;
     }
 
     T get_front() {
@@ -118,18 +129,7 @@ public:
         return value;
     }
 
-    MyBase<T>* position(int index) { //получение указателя на объект,  по индексу 
-        MyBase<T>* buf = front;
-        for (int i = 0; i < size; i++) { //eol
-            if (i == index) {
-                return buf;
-            }
-            else {
-                buf = buf->next;
-            }
-        }
-        return nullptr;
-    }
+
 
     T get_value(int index) { //получение значения элемента по индексу
         return position(index)->data;
