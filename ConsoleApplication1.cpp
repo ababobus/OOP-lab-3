@@ -1,8 +1,7 @@
 ﻿#include <iostream>
 
 template<typename T>
-class MyBase {
-public:
+struct MyBase {
     T data;
     MyBase<T>* next = nullptr;
     MyBase<T>* prev = nullptr;
@@ -68,6 +67,7 @@ public:
         if (current != nullptr) {
             return current->data;
         }
+        return -1;
     }
 
     T pop_front() {
