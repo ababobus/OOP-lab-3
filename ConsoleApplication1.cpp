@@ -23,18 +23,7 @@ private:
     MyBase<T>* current = nullptr;
     T size = 0;
 
-    MyBase<T>* position(int index) { //получение указателя на объект,  по индексу 
-        MyBase<T>* buf = front;
-        for (int i = 0; i < size; i++) { //eol
-            if (i == index) {
-                return buf;
-            }
-            else {
-                buf = buf->next;
-            }
-        }
-        return nullptr;
-    }
+
 public:
 
     MyStorage() {
@@ -53,34 +42,40 @@ public:
         return size;
     }
 
-    T get_next(int index) {
-        return position(index)->next->data;
+    bool eol() {
+        return current == nullptr;
     }
-
-
-    T get_prev(int index) {
-        return position(index)->prev->data;
-    }
-
-    T get_front() {
-        if (size == 0) {
-            throw std::out_of_range("empty list");
-            return 0;
-        }
-        else {
-            return front->data;
+    
+    void next() {
+        if (current != nullptr) {
+            current = current->next;
         }
     }
 
-    T pop_front() {//получение и удаление первого элемента
+    void prev() {
+        if (current != nullptr) {
+            current = current->prev;
+        }
+    }
+    void get_front() {
+        current = front;
+    }
+    void get_back() {
+        current = back;
+    }
 
+    T get_value() {
+        if (current != nullptr) {
+            return current->data;
+        }
+    }
+
+    T pop_front() {
         T value = front->data;
-
         if (size == 0) {
             throw std::out_of_range("empty list");
-            return 0;
+            return -1;
         }
-
         if (size == 1) {
             delete front;
             front = nullptr;
@@ -96,22 +91,12 @@ public:
         return value;
     }
 
-    T get_back() {//получение последнего элемента списка
-        if (size == 0) {
-            throw std::out_of_range("empty list");
-            return 0;
-        }
-        else {
-            return back->data;
-        }
-    }
-
     T pop_back() {//получение и удаление последнего элемента списка
         T value = back->data;
 
         if (size == 0) {
             throw std::out_of_range("empty list");
-            return 0;
+            return -1;
         }
 
         if (size == 1) {
@@ -127,12 +112,6 @@ public:
         back->next = nullptr;
         size--;
         return value;
-    }
-
-
-
-    T get_value(int index) { //получение значения элемента по индексу
-        return position(index)->data;
     }
 
     void push_front(T object) {//вставка элемента в начало 
@@ -213,7 +192,11 @@ public:
             return 0;
         }
 
-        MyBase<T>* buf = position(index);
+        MyBase<T>* buf = front;
+        for (int i = 0; i < index; i++) {
+            buf = buf->next;
+        }
+
         T value = buf->data;
         (buf->prev)->next = buf->next;
         (buf->next)->prev = buf->prev;
@@ -223,9 +206,17 @@ public:
         return value;
     }
 
-    T& operator[](int index) {
-        return position(index)->data;
-        //T operator ... return get_value(index)
+    T operator[](int index) {
+        MyBase<T>* buf = front;
+        int count = 0;
+        while (buf != nullptr && count < index) {
+            buf = buf->next;
+            count++;
+        }
+        if (buf != nullptr) {
+            return buf->data;
+        }
+        return -1;  
     }
 };
 
@@ -240,17 +231,31 @@ int main()
     for (int i = 0; i < 10; i++) {
         a.push_back(i);
     }
+
     a.insert(3, 32);
 
-    std::cout << a[7] << "\n";
+    for (a.get_front(); !a.eol(); a.next()) {
+        std::cout << a.get_value() << " ";
+        
+    }
+    std::cout << std::endl;
 
-    //MyBase<int>* b = a.position(4);
-    std::cout << a.get_prev(4) << std::endl;
 
     a.remove(7);
 
-    //std::cout<< a.get_value(7) << std::endl;
 
-    std::cout << "Hello World!\n";
+    a.get_back();
+    while (!a.eol()) {
+        std::cout << a.get_value() << " ";
+        a.prev();
+    }
+
+    a.push_front(99);
+    std::cout << "\n";
+
+    for (int i = 0; i < a.get_size(); i++) {
+        std::cout << a[i] << " ";
+    }
+    std::cout << "\n";
     return 0;
 }
